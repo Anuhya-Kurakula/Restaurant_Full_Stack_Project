@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Restaurant Menu</title>
+</head>
+
+<body>
+
+<h1>Restaurant Menu</h1>
+
+<ul id="menu"></ul>
+
+<script>
+fetch("/menu/")
+.then(response => response.json())
+.then(data => {
+
+    const menu = document.getElementById("menu");
+
+    data.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = item.name + " - ₹" + item.price;
+        menu.appendChild(li);
+    });
+
+});
+</script>
+
+</body>
+</html>
