@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://192.168.1.36:8000/"
+  baseURL: "https://restaurant-qr-backend.onrender.com/"
 });
 
 export const getMenu = () => API.get("menu/");
