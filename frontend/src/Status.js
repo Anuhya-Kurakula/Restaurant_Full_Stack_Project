@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import "./components/Status.css";
@@ -10,11 +10,11 @@ function Status() {
 
   const [orders, setOrders] = useState([]);
 
-  // 🔥 YOUR LAPTOP IP
-  const API_URL = "http://10.240.117.245:8000";
+  // ✅ RENDER BACKEND URL
+  const API_URL = "https://restaurant-qr-backend.onrender.com";
 
   // ✅ FETCH ORDERS
-  const fetchOrders = () => {
+  const fetchOrders = useCallback(() => {
 
     axios.get(`${API_URL}/order-status/`)
 
@@ -38,7 +38,8 @@ function Status() {
       })
 
       .catch(err => console.log(err));
-  };
+
+  }, [API_URL, tableNumber]);
 
   useEffect(() => {
 
@@ -48,7 +49,7 @@ function Status() {
 
     return () => clearInterval(interval);
 
-  }, []);
+  }, [fetchOrders]);
 
   // ✅ STATUS COLORS
   const getColor = (status) => {

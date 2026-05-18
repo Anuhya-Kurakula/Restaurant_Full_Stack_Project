@@ -13,16 +13,16 @@ function Menu() {
   // ✅ RENDER BACKEND URL
   const API_URL = "https://restaurant-qr-backend.onrender.com";
 
-  const defaultImages = [
-    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300",
-    "https://images.unsplash.com/photo-1550547660-d9450f859349?w=300",
-    "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=300",
-    "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300",
-    "https://images.unsplash.com/photo-1601924582975-7e6c1a52f9f1?w=300"
-  ];
-
   // ✅ FETCH MENU ITEMS
   useEffect(() => {
+
+    const defaultImages = [
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300",
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=300",
+      "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=300",
+      "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300",
+      "https://images.unsplash.com/photo-1601924582975-7e6c1a52f9f1?w=300"
+    ];
 
     axios.get(`${API_URL}/menu/`)
       .then(res => {
@@ -37,7 +37,7 @@ function Menu() {
       })
       .catch(err => console.log(err));
 
-  }, [defaultImages]);
+  }, []);
 
   // ✅ ADD TO CART
   const addToCart = (item) => {
