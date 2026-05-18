@@ -10,8 +10,8 @@ function Menu() {
   const [menuItems, setMenuItems] = useState([]);
   const [cart, setCart] = useState([]);
 
-  // 🔥 YOUR LAPTOP IP
-const API_URL = "http://10.240.117.245:8000";
+  // ✅ RENDER BACKEND URL
+  const API_URL = "https://restaurant-qr-backend.onrender.com";
 
   const defaultImages = [
     "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300",
@@ -37,7 +37,7 @@ const API_URL = "http://10.240.117.245:8000";
       })
       .catch(err => console.log(err));
 
-  }, []);
+  }, [defaultImages]);
 
   // ✅ ADD TO CART
   const addToCart = (item) => {
