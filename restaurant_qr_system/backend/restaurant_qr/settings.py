@@ -6,15 +6,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 🔐 Security
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-change-this-key")
 
-DEBUG  = True
+# ⚠️ IMPORTANT: keep False in production
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://restaurant-qr-backend.onrender.com",
+# Allow your Render domain
+ALLOWED_HOSTS = [
+    "restaurant-full-stack-project.onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
-# 🧩 Installed Apps
+# CSRF (important for production)
+CSRF_TRUSTED_ORIGINS = [
+    "https://restaurant-full-stack-project.onrender.com",
+]
+
+# 🧩 Apps
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
@@ -59,28 +66,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'restaurant_qr.wsgi.application'
 
-# 🗄 DATABASE (Safe for Render Free Plan)
-if os.environ.get("RENDER"):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': '/tmp/db.sqlite3',
-        }
+# 🗄 DATABASE (FIXED - NO /tmp)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
+# 🔐 Password validation
 AUTH_PASSWORD_VALIDATORS = []
 
+# 🌍 Localization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
 USE_TZ = True
 
@@ -90,5 +89,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 🌍 CORS
+# 🌐 CORS
 CORS_ALLOW_ALL_ORIGINS = True

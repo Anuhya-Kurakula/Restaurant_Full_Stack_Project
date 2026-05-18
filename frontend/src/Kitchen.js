@@ -6,8 +6,8 @@ function Kitchen() {
 
   const [orders, setOrders] = useState([]);
 
-  // 🔥 YOUR LAPTOP IP
-  const API_URL = "http://10.240.117.245:8000";
+  // ✅ BACKEND URL
+  const API_URL = "https://restaurant-qr-backend.onrender.com";
 
   // ✅ FETCH ORDERS
   const fetchOrders = () => {
@@ -15,13 +15,14 @@ function Kitchen() {
     axios.get(`${API_URL}/orders/`)
       .then(res => setOrders(res.data))
       .catch(err => console.log(err));
+
   };
 
   useEffect(() => {
 
     fetchOrders();
 
-    // ✅ AUTO REFRESH
+    // AUTO REFRESH
     const interval = setInterval(fetchOrders, 5000);
 
     return () => clearInterval(interval);
