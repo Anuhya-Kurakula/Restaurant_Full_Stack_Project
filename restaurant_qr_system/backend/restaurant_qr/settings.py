@@ -11,14 +11,14 @@ DEBUG = False
 
 # Allow your Render domain
 ALLOWED_HOSTS = [
-    "restaurant-full-stack-project.onrender.com",
+    "restaurant-qr-backend.onrender.com",
     "localhost",
-    "127.0.0.1",
+    "127.0.0.1"
 ]
 
 # CSRF (important for production)
 CSRF_TRUSTED_ORIGINS = [
-    "https://restaurant-full-stack-project.onrender.com",
+    "https://restaurant-qr-backend.onrender.com",
 ]
 
 # 🧩 Apps
@@ -91,3 +91,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 🌐 CORS
 CORS_ALLOW_ALL_ORIGINS = True
+
+APPEND_SLASH = True
