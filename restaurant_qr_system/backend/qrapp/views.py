@@ -1,20 +1,21 @@
 import qrcode
 from io import BytesIO
 from django.http import HttpResponse
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import MenuItem, Order
 from .serializers import MenuItemSerializer, OrderSerializer
 
 
-# ✅ HOME PAGE
+# ✅ HOME
 def home(request):
     return HttpResponse("Backend is Running 🚀")
 
 
-# ✅ GET MENU ITEMS
+# ✅ MENU
 @api_view(['GET'])
 def menu_list(request):
     items = MenuItem.objects.all()
@@ -22,23 +23,21 @@ def menu_list(request):
     return Response(serializer.data)
 
 
-# ✅ CREATE ORDER
+# ✅ CREATE ORDER (IMPORTANT FIXED)
+@csrf_exempt
 @api_view(['POST'])
 def create_order(request):
 
-    items = request.data.get("items")
-    total = request.data.get("total")
-    table_number = request.data.get("table_number")
+    serializer = OrderSerializer(data=request.data)
 
-    order = Order.objects.create(
-        items=items,
-        total=total,
-        table_number=table_number
-    )
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Order placed successfully"}, status=201)
 
-    return Response({"message": "Order placed"}, status=201)
+    return Response(serializer.errors, status=400)
 
-# ✅ GET ALL ORDERS (optional for admin view)
+
+# ✅ GET ALL ORDERS
 @api_view(['GET'])
 def order_list(request):
     orders = Order.objects.all().order_by('-created_at')
@@ -46,19 +45,7 @@ def order_list(request):
     return Response(serializer.data)
 
 
-# ✅ GENERATE QR CODE (table-based)
-@api_view(['GET'])
-def generate_qr(request, table):
-
-    # frontend menu link
-    url = f"http://localhost:3000/menu/{table}"
-
-    img = qrcode.make(url)
-
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-
-    return HttpResponse(buffer.getvalue(), content_type="image/png")
+# ✅ UPDATE ORDER STATUS
 @api_view(['PATCH'])
 def update_order(request, id):
     try:
@@ -66,23 +53,36 @@ def update_order(request, id):
     except Order.DoesNotExist:
         return Response({"error": "Not found"}, status=404)
 
-    new_status = request.data.get("status", order.status)
+    order.status = request.data.get("status", order.status)
 
-    order.status = new_status
-
-    # 🔥 UPDATE ETA
-    if new_status == "Pending":
+    if order.status == "Pending":
         order.estimated_time = 15
-    elif new_status == "Preparing":
+    elif order.status == "Preparing":
         order.estimated_time = 10
-    elif new_status == "Done":
+    elif order.status == "Done":
         order.estimated_time = 0
 
     order.save()
-
     return Response({"message": "Updated"})
+
+
+# ✅ ORDER STATUS
 @api_view(['GET'])
 def get_order_status(request):
     orders = Order.objects.all().order_by('-created_at')
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
+
+
+# ✅ QR CODE GENERATOR
+@api_view(['GET'])
+def generate_qr(request, table):
+
+    url = f"https://your-frontend.vercel.app/menu/{table}"
+
+    img = qrcode.make(url)
+
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    return HttpResponse(buffer.getvalue(), content_type="image/png")

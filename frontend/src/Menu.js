@@ -10,10 +10,9 @@ function Menu() {
   const [menuItems, setMenuItems] = useState([]);
   const [cart, setCart] = useState([]);
 
-  // ✅ RENDER BACKEND URL
   const API_URL = "https://restaurant-qr-backend.onrender.com";
 
-  // ✅ FETCH MENU ITEMS
+  // ✅ FETCH MENU
   useEffect(() => {
 
     const defaultImages = [
@@ -33,9 +32,10 @@ function Menu() {
         }));
 
         setMenuItems(itemsWithImages);
-
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log("Menu fetch error:", err);
+      });
 
   }, []);
 
@@ -45,17 +45,13 @@ function Menu() {
     const existing = cart.find(i => i.id === item.id);
 
     if (existing) {
-
       setCart(cart.map(i =>
         i.id === item.id
           ? { ...i, quantity: i.quantity + 1 }
           : i
       ));
-
     } else {
-
       setCart([...cart, { ...item, quantity: 1 }]);
-
     }
   };
 
@@ -64,142 +60,98 @@ function Menu() {
 
     const existing = cart.find(i => i.id === item.id);
 
+    if (!existing) return;
+
     if (existing.quantity === 1) {
-
       setCart(cart.filter(i => i.id !== item.id));
-
     } else {
-
       setCart(cart.map(i =>
         i.id === item.id
           ? { ...i, quantity: i.quantity - 1 }
           : i
       ));
-
     }
   };
 
-  // ✅ TOTAL
+  // ✅ TOTAL CALCULATION
   const total = cart.reduce(
     (sum, item) => sum + item.cost * item.quantity,
     0
   );
 
-  // ✅ PLACE ORDER
+  // ✅ PLACE ORDER (🔥 IMPORTANT FIXED ENDPOINT)
   const placeOrder = () => {
 
-    if (cart.length === 0) {
+  if (cart.length === 0) {
+    alert("Cart is Empty!");
+    return;
+  }
 
-      alert("Cart is Empty!");
-      return;
+  const orderData = {
+    table_number: Number(table),
 
-    }
+    // ✅ SAFE FORMAT (NO 400 ERROR)
+    items: JSON.stringify(
+      cart.map(item => `${item.name} x${item.quantity}`)
+    ),
 
-    const orderData = {
-
-      table_number: parseInt(table),
-
-      items: cart.map(item =>
-        `${item.name} x${item.quantity}`
-      ).join(", "),
-
-      total: total
-
-    };
-
-    axios.post(`${API_URL}/order/`, orderData)
-
-      .then(() => {
-
-        alert("🎉 Order Successfully Placed!");
-
-        setCart([]);
-
-      })
-
-      .catch(err => console.log(err));
+    total: total
   };
 
-  return (
+  axios.post(`${API_URL}/order/`, orderData)
+    .then(() => {
+      alert("🎉 Order Placed Successfully!");
+      setCart([]);
+    })
+    .catch(err => {
+      console.log(err.response?.data || err.message);
+      alert("Order Failed");
+    });
+};
 
+  return (
     <div className="menu-page">
 
       {/* NAVBAR */}
       <div className="navbar">
-
         <h2>🍴 Spice Garden</h2>
 
         <div className="nav-links">
-
-          <Link to={`/menu/${table}`}>
-            Menu
-          </Link>
-
-          <Link to={`/status/${table}`}>
-            My Orders
-          </Link>
-
-          <a href="#contact">
-            Contact
-          </a>
-
+          <Link to={`/menu/${table}`}>Menu</Link>
+          <Link to={`/status/${table}`}>My Orders</Link>
+          <a href="#contact">Contact</a>
         </div>
-
       </div>
 
       {/* TITLE */}
-      <h1 className="menu-title">
-        🍽 Restaurant Menu (Table {table})
-      </h1>
+      <h1>🍽 Menu (Table {table})</h1>
 
-      {/* MENU ITEMS */}
+      {/* MENU LIST */}
       <div className="menu-container">
-
-        {menuItems.map((item) => (
-
+        {menuItems.map(item => (
           <div key={item.id} className="menu-item">
 
-            <img
-              src={item.image}
-              alt={item.name}
-              className="food-image"
-            />
+            <img src={item.image} alt={item.name} />
 
-            <div className="menu-text">
+            <h3>{item.name}</h3>
+            <p>₹ {item.cost}</p>
 
-              <h2>{item.name}</h2>
-
-              <p>
-                {item.description || "Delicious food"}
-              </p>
-
-              <span className="price">
-                ₹ {item.cost}
-              </span>
-
-              <button onClick={() => addToCart(item)}>
-                Add to Cart
-              </button>
-
-            </div>
+            <button onClick={() => addToCart(item)}>
+              Add to Cart
+            </button>
 
           </div>
-
         ))}
-
       </div>
 
       {/* CART */}
       <div className="cart-section">
 
-        <h2>🛒 Your Order</h2>
+        <h2>🛒 Cart</h2>
 
-        {cart.length === 0 && (
-          <p>No items added</p>
-        )}
+        {cart.length === 0 && <p>No items in cart</p>}
 
         {cart.map(item => (
-
           <div key={item.id} className="cart-item">
 
             <span>
@@ -211,51 +163,18 @@ function Menu() {
             </span>
 
             <div>
-
-              <button onClick={() => removeFromCart(item)}>
-                ➖
-              </button>
-
-              <button onClick={() => addToCart(item)}>
-                ➕
-              </button>
-
+              <button onClick={() => removeFromCart(item)}>➖</button>
+              <button onClick={() => addToCart(item)}>➕</button>
             </div>
 
           </div>
-
         ))}
 
-        {cart.length > 0 && (
+        <h3>Total: ₹ {total}</h3>
 
-          <>
-
-            <h3>Total: ₹ {total}</h3>
-
-            <button onClick={placeOrder}>
-              Place Order
-            </button>
-
-          </>
-
-        )}
-
-      </div>
-
-      {/* CONTACT SECTION */}
-      <div id="contact" className="contact-section">
-
-        <h2>📞 Contact Us</h2>
-
-        <p>🍴 Spice Garden Restaurant</p>
-
-        <p>📍 Hyderabad, India</p>
-
-        <p>📱 +91 9876543210</p>
-
-        <p>✉ spicegarden@gmail.com</p>
-
-        <p>🕒 Open: 10 AM - 11 PM</p>
+        <button onClick={placeOrder}>
+          Place Order
+        </button>
 
       </div>
 

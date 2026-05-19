@@ -7,13 +7,13 @@ urlpatterns = [
 
     path('menu/', views.menu_list),
 
-    path('order/', views.create_order),
+    path('order/', views.create_order),   # ✅ IMPORTANT
 
     path('orders/', views.order_list),
 
-    path('orders/<int:id>/', views.update_order),  # 🔥 NEW
+    path('orders/<int:id>/', views.update_order),
 
     path('qr/<int:table>/', views.generate_qr),
-    
+
     path('order-status/', views.get_order_status),
 ]
