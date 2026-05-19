@@ -1,53 +1,41 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Menu from "./Menu";
-import Kitchen from "./Kitchen";
-import Status from "./Status";
 
 function App() {
-
   return (
-
-    <Router>
+    <BrowserRouter>
 
       <Routes>
 
         {/* HOME PAGE */}
         <Route
           path="/"
-          element={
-            <h2>
-              Welcome to Restaurant System 🍽
-            </h2>
-          }
+          element={<Menu />}
         />
 
-        {/* MENU PAGE */}
+        {/* MENU PAGE (TABLE WISE) */}
         <Route
           path="/menu/:table"
           element={<Menu />}
         />
 
-        {/* STATUS PAGE */}
+        {/* OPTIONAL: STATUS PAGE (if you have it) */}
         <Route
           path="/status/:table"
-          element={<Status />}
+          element={<Menu />}
         />
 
-        {/* KITCHEN DASHBOARD */}
+        {/* FALLBACK ROUTE (IMPORTANT) */}
         <Route
-          path="/kitchen"
-          element={<Kitchen />}
+          path="*"
+          element={<Menu />}
         />
 
       </Routes>
 
-    </Router>
+    </BrowserRouter>
   );
 }
 
