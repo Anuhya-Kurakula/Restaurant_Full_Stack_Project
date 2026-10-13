@@ -6,14 +6,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 🔐 Security
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-change-this-key")
 
-# ⚠️ IMPORTANT: keep False in production
-DEBUG = False
+# ⚠️ Keep True for local development, False for production
+DEBUG = True
 
-# Allow your Render domain
+# Allow Render domain and local development
 ALLOWED_HOSTS = [
     "restaurant-qr-backend.onrender.com",
     "localhost",
-    "127.0.0.1"
+    "127.0.0.1",
+    "[::1]",
+    "*"
 ]
 
 # CSRF (important for production)

@@ -36,6 +36,6 @@ menu_data = [
 ]
 
 for item in menu_data:
-    MenuItem.objects.create(name=item["name"], price=item["cost"])
+    MenuItem.objects.get_or_create(name=item["name"], defaults={"cost": item["cost"]})
 
 print("Expanded menu items added successfully!")
